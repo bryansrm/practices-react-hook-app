@@ -1,24 +1,43 @@
-import React, { useReducer } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { todoReducer } from './todoReducer';
+import { useForm } from '../../hooks/useForm';
 
 import './reducer.css';
 
-const initialState = [{
-    id: new Date().getTime(),
-    desc: 'Aprender React',
-    done: false
-}];
+// const initialState = [{
+//     id: new Date().getTime(),
+//     desc: 'Aprender React',
+//     done: false
+// }];
+
+const init = () => {
+    // return [{
+    //     id: new Date().getTime(),
+    //     desc: 'Aprender React',
+    //     done: false
+    // }];
+    return JSON.parse(localStorage.getItem('todos')) || [];
+}
 
 export const TodoApp = () => {
 
-    const [ todos, dispatch ] = useReducer(todoReducer, initialState);
+    const [ todos, dispatch ] = useReducer(todoReducer, [], init);
+    const [ { description }, handleInputChange, reset ] = useForm({
+        description: ''
+    });
+
+    useEffect(() => {
+        localStorage.setItem('todos', JSON.stringify( todos ));
+    }, [ todos ]);
     
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        if( description.trim().length < 1 ) return;
+
         const newTodo = {
             id: new Date().getTime(),
-            desc: 'Aprender Ingles',
+            desc: description,
             done: false
         };
 
@@ -29,6 +48,17 @@ export const TodoApp = () => {
 
         dispatch( action );
 
+        reset();
+
+    }
+
+    const handleCompleteTask = ( id ) => {
+        // const action = {
+        //     type: 'complete',
+        //     payload: id
+        // }
+
+        // dispatch( action );
     }
 
     return (
@@ -43,10 +73,12 @@ export const TodoApp = () => {
                     className="d-flex justify-content-between align-items-center">
                     <input 
                         type="text"
-                        name="descripction"
+                        name="description"
                         className="form-control"
                         placeholder="Aprender..."
                         autoComplete="off"
+                        value={ description }
+                        onChange={ handleInputChange }
                     />
                     <button
                         type="submit"
@@ -68,7 +100,10 @@ export const TodoApp = () => {
                                 className="list-group-item"
                             >
                                 <div className="d-flex justify-content-between align-items-center">
-                                    <p className="mb-0 font-weight-bold">{ idx + 1 }. { todo.desc } </p>
+                                    <p 
+                                        className={ todo.done ? "mb-0 font-weight-bold task-complete" : "mb-0 font-weight-bold"}
+                                        onClick={ handleCompleteTask( todo.id ) }
+                                    >{ idx + 1 }. { todo.desc } </p>
                                     <button 
                                         className="btn btn-danger"
                                     >
