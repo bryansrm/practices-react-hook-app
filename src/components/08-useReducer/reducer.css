@@ -1,0 +1,8 @@
+.task-complete{
+    text-decoration: line-through;
+    font-weight: normal!important;
+}
+
+.list-group-item p {
+    cursor: pointer;
+}
