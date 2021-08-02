@@ -4,18 +4,7 @@ import { useForm } from '../../hooks/useForm';
 
 import './reducer.css';
 
-// const initialState = [{
-//     id: new Date().getTime(),
-//     desc: 'Aprender React',
-//     done: false
-// }];
-
 const init = () => {
-    // return [{
-    //     id: new Date().getTime(),
-    //     desc: 'Aprender React',
-    //     done: false
-    // }];
     return JSON.parse(localStorage.getItem('todos')) || [];
 }
 
@@ -52,13 +41,22 @@ export const TodoApp = () => {
 
     }
 
-    const handleCompleteTask = ( id ) => {
-        // const action = {
-        //     type: 'complete',
-        //     payload: id
-        // }
+    const handleDelete = ( id ) => {
+        const action = {
+            type: 'delete',
+            payload: id
+        }
 
-        // dispatch( action );
+        dispatch( action );
+    }
+
+    const handleToggleTask = ( id ) => {
+        const action = {
+            type: 'toggle-task',
+            payload: id
+        }
+
+        dispatch( action );
     }
 
     return (
@@ -101,11 +99,12 @@ export const TodoApp = () => {
                             >
                                 <div className="d-flex justify-content-between align-items-center">
                                     <p 
-                                        className={ todo.done ? "mb-0 font-weight-bold task-complete" : "mb-0 font-weight-bold"}
-                                        onClick={ handleCompleteTask( todo.id ) }
+                                        className={ `mb-0 font-weight-bold ${ todo.done && 'task-complete'}` }
+                                        onClick={ () => handleToggleTask( todo.id ) }
                                     >{ idx + 1 }. { todo.desc } </p>
                                     <button 
                                         className="btn btn-danger"
+                                        onClick={ () => handleDelete( todo.id ) }
                                     >
                                         Borrar
                                     </button>
